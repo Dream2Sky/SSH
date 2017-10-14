@@ -2,13 +2,32 @@
 <!DOCTYPE struts PUBLIC
         "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
         "http://struts.apache.org/dtds/struts-2.5.dtd">
-        <struts>
-        	<package name="default" namespace="/" extends="struts-default">
-        		<action name="Login" method="Login" class="com.dream2sky.action.Account">
-        			<result name="success">index.jsp</result>
-        		</action>
-        		<action name="Logout" method="Logout" class="com.dream2sky.action.Account">
-        			<result name="success">index.jsp</result>
-        		</action>
-        	</package>
-        </struts>
+<struts>
+	<package name="authPackage" namespace="/" extends="struts-default">
+		<interceptors>
+			<interceptor name="authInterceptor"
+				class="com.dream2sky.interceptor.AuthInterceptor"></interceptor>
+			<interceptor-stack name="mydefaultStack">
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="authInterceptor"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-action-ref name="home"></default-action-ref>
+		<action name="login" method="login" class="com.dream2sky.action.AuthAction">
+			<result name="success">/WEB-INF/home/index.jsp</result>
+			<result name="error">/WEB-INF/auth/login.jsp</result>
+			<result name="input">/WEB-INF/auth/login.jsp</result>
+		</action>
+
+		<action name="logout" method="logout" class="com.dream2sky.action.AuthAction">
+			<result name="success">/WEB-INF/auth/login.jsp</result>
+		</action>
+
+		<action name="home">
+			<interceptor-ref name="mydefaultStack"></interceptor-ref>
+			<result>/WEB-INF/home/index.jsp</result>
+			<result name="login">/WEB-INF/auth/login.jsp</result>
+		</action>
+
+	</package>
+</struts>
